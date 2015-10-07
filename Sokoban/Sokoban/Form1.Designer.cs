@@ -1,6 +1,6 @@
 ﻿namespace Sokoban
 {
-    partial class Form1
+    partial class Menu
     {
         /// <summary>
         /// Wymagana zmienna projektanta.
@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Text = "Form1";
+            this.Text = "Menu";
         }
 
         #endregion
