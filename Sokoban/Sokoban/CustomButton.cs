@@ -13,6 +13,7 @@ namespace Sokoban
         Bitmap normal;
         Bitmap pressed;
         Bitmap focus;
+        Boolean flagDown = false;
 
         public CustomButton(String pathToImageNormal, String pathToImagePressed, String pathToImageFocused, int positionX, int positionY, String tag)
         {
@@ -33,29 +34,33 @@ namespace Sokoban
 
         private void mouseClickDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left && flagDown == false)
             {
+                flagDown = true;
                 Image = pressed;
-                Refresh();
+            }
+            else
+            {
+                flagDown = false;
             }
         }
 
         private void mouseClickUp(object sender, MouseEventArgs e)
         {
+            flagDown = false;
             Image = normal;
-            Refresh();
         }
 
         private void mouseMove(object sender, MouseEventArgs e)
         {
-            Image = focus;
-            Refresh();
+            if(flagDown == false){
+                Image = focus;
+            }     
         }
 
         private void mouseLeave(object sender, EventArgs e)
         {
             Image = normal;
-            Refresh();
         }
 
     }
