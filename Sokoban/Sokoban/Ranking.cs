@@ -27,9 +27,9 @@ namespace Sokoban
             logo.Image = pngLogo;
             logo.Width = pngLogo.Width;
             logo.Height = pngLogo.Height;
-            logo.Location = new Point(250,20);
+            logo.Location = new Point(290,20);
 
-            cbBack = new CustomButton(@"Buttons\RankingButtons\BackNormal.png", @"Buttons\RankingButtons\BackPress.png", @"Buttons\RankingButtons\BackFocus.png", 20, 350, "BackTag");
+            cbBack = new CustomButton(@"Buttons\RankingButtons\BackNormal.png", @"Buttons\RankingButtons\BackPress.png", @"Buttons\RankingButtons\BackFocus.png", 20, 660, "BackTag");
 
             this.BackgroundImage = new Bitmap(@"Drawable\Wall_Beige.png");
 
