@@ -24,7 +24,7 @@ namespace Sokoban
             String pat = new FileInfo("buttons").Directory.FullName;
             string fileName = "ich_will.mp3";
             string path = Path.Combine(Environment.CurrentDirectory, @"buttons\", "normal.png");
-           // cbNewGame = new CustomButton();
+            //cbNewGame = new CustomButton();
             InitializeComponent();
         }
     }
