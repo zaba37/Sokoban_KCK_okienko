@@ -10,10 +10,10 @@ namespace Sokoban
 {
     class CustomButton : PictureBox
     {
-        Bitmap normal;
-        Bitmap pressed;
-        Bitmap focus;
-        Boolean flagDown = false;
+        private Bitmap normal;
+        private Bitmap pressed;
+        private Bitmap focus;
+        private Boolean flagDown = false;
 
         public CustomButton(String pathToImageNormal, String pathToImagePressed, String pathToImageFocused, int positionX, int positionY, String tag)
         {
@@ -21,6 +21,7 @@ namespace Sokoban
             pressed = new Bitmap(pathToImagePressed);
             focus = new Bitmap(pathToImageFocused);
             Image = normal;
+            BackColor = Color.Transparent;
             Tag = tag;
             Location = new Point(positionX, positionY);
             Height = normal.Height;
