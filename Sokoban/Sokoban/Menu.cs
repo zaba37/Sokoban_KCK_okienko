@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -19,6 +20,7 @@ namespace Sokoban
         private CustomButton cbExit;
         private Bitmap pngLogo;
         private PictureBox logo;
+        SoundPlayer typewriter;
 
         public Menu()
         {
