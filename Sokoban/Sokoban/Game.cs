@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows.Forms;
 using System.Windows.Input;
 namespace Sokoban
@@ -15,34 +16,76 @@ namespace Sokoban
     {
         private List<List<int>> readNumbers;
         List<List<MapObject>> Map;
+        private int[] heroPosition;
+
+        private int mapNumber = 1;
         private int posX;
         private int posY;
         List<PointPosition> PointsList;
+
         private int SetBoxes;
+        private int numberSteps;
+        private int numberShiftsBoxes;
+
+        private int previousNumberSteps;
+        private int previousnumberShiftsBoxes;
+
         private int widthElement;
         private int heightElement;
-  
+        private CustomButton cbArrowUp;
+        private CustomButton cbArrowDown;
+        private CustomButton cbArrowRight;
+        private CustomButton cbArrowLeft;
+        private System.Timers.Timer timer;
+        private DateTime startTime;
+        private String elapsedTime;
+        private DateTime pauseTime;
+        private Label infoTimeLabel;
+        private Point infoTimeLabelLocation;
+
+        private Label infoStepsLabel;
+        private Point infoStepsLabelLocation;
+
+        private Label infoBoxesLabel;
+        private Point infoBoxesLabelLocation;
+
+
+        private Label TimeLabel;
+        private Point TimeLabelLocation;
+
+        private Label StepsLabel;
+        private Point StepsLabelLocation;
+
+        private Label BoxesLabel;
+        private Point BoxesLabelLocation;
+
+
         public Game()
         {
             InitializeComponent();
             FormBorderStyle = FormBorderStyle.None;
             WindowState = FormWindowState.Maximized;
+            Control.CheckForIllegalCrossThreadCalls = false;
             this.BackgroundImage = Image.FromFile(@"Map\Floor.png");
-            
+            this.DoubleBuffered = true;
+
+
+
+
             PointsList = null;
             SetBoxes = 0;
             posX = 0;
             posY = 0;
             widthElement = 64;
             heightElement = 64;
-            
-            
-    
+
+
+
             initMap("sokoban_1.txt");
         }
-        
 
-        
+
+
         private List<List<int>> readFile(string path)
         {
             List<List<int>> intMap = null; ;
@@ -53,7 +96,7 @@ namespace Sokoban
                 intMap = map.Select(l => l.Select(i => int.Parse(i)).ToList()).ToList();
                 return intMap;
             }
-            
+
             catch
             {
                 Environment.Exit(0);
@@ -61,6 +104,167 @@ namespace Sokoban
 
             return intMap;
         }
+
+        private void initLabels()
+        {
+            infoTimeLabelLocation = new Point(800, 40);
+            infoTimeLabel = new Label();
+            infoTimeLabel.Width = 100;
+            infoTimeLabel.Height = 100;
+            infoTimeLabel.Font = new Font(Font.Name, 22);
+            infoTimeLabel.Location = infoTimeLabelLocation;
+            infoTimeLabel.BackColor = System.Drawing.Color.Transparent;
+            infoTimeLabel.Text = "Time: ";
+            this.Controls.Add(infoTimeLabel);
+
+
+
+            TimeLabelLocation = new Point(900, 40);
+            TimeLabel = new Label();
+            TimeLabel.Width = 100;
+            TimeLabel.Height = 100;
+            TimeLabel.Font = new Font(Font.Name, 22);
+            TimeLabel.Location = TimeLabelLocation;
+            TimeLabel.BackColor = System.Drawing.Color.Transparent;
+            TimeLabel.Text = "00:00";
+            this.Controls.Add(TimeLabel);
+
+
+
+
+
+
+
+            infoStepsLabelLocation = new Point(800, 140);
+            infoStepsLabel = new Label();
+            infoStepsLabel.Width = 300;
+            infoStepsLabel.Height = 100;
+            infoStepsLabel.Font = new Font(Font.Name, 22);
+            infoStepsLabel.Location = infoStepsLabelLocation;
+            infoStepsLabel.BackColor = System.Drawing.Color.Transparent;
+            infoStepsLabel.Text = "steps: ";
+            this.Controls.Add(infoStepsLabel);
+
+
+
+
+            StepsLabelLocation = new Point(1100, 140);
+            StepsLabel = new Label();
+            StepsLabel.Width = 100;
+            StepsLabel.Height = 100;
+            StepsLabel.Font = new Font(Font.Name, 22);
+            StepsLabel.Location = StepsLabelLocation;
+            StepsLabel.BackColor = System.Drawing.Color.Transparent;
+            StepsLabel.Text = "0";
+            this.Controls.Add(StepsLabel);
+
+
+
+            infoBoxesLabelLocation = new Point(800, 240);
+            infoBoxesLabel = new Label();
+            infoBoxesLabel.Width = 300;
+            infoBoxesLabel.Height = 100;
+            infoBoxesLabel.Font = new Font(Font.Name, 22);
+            infoBoxesLabel.Location = infoBoxesLabelLocation;
+            infoBoxesLabel.BackColor = System.Drawing.Color.Transparent;
+            infoBoxesLabel.Text = "boxes: ";
+            this.Controls.Add(infoBoxesLabel);
+
+
+            BoxesLabelLocation = new Point(1100, 240);
+            BoxesLabel = new Label();
+            BoxesLabel.Width = 100;
+            BoxesLabel.Height = 100;
+            BoxesLabel.Font = new Font(Font.Name, 22);
+            BoxesLabel.Location = BoxesLabelLocation;
+            BoxesLabel.BackColor = System.Drawing.Color.Transparent;
+            BoxesLabel.Text = "0";
+            this.Controls.Add(BoxesLabel);
+
+        }
+
+
+        private void initButtons()
+        {
+            cbArrowUp = new CustomButton(@"Map\Wall.png", @"Map\Wall.png", @"Map\Wall.png", 700, 550, "UpTag");
+            cbArrowDown = new CustomButton(@"Map\Wall.png", @"Map\Wall.png", @"Map\Wall.png", 750, 590, "DownTag");
+            cbArrowRight = new CustomButton(@"Map\Wall.png", @"Map\Wall.png", @"Map\Wall.png", 800, 550, "RightTag");
+            cbArrowLeft = new CustomButton(@"Map\Wall.png", @"Map\Wall.png", @"Map\Wall.png", 840, 600, "LeftTag");
+
+            this.Controls.Add(cbArrowUp);
+            this.Controls.Add(cbArrowDown);
+            this.Controls.Add(cbArrowRight);
+            this.Controls.Add(cbArrowLeft);
+
+            cbArrowUp.MouseClick += new MouseEventHandler(mouseClick);
+            cbArrowDown.MouseClick += new MouseEventHandler(mouseClick);
+            cbArrowRight.MouseClick += new MouseEventHandler(mouseClick);
+            cbArrowLeft.MouseClick += new MouseEventHandler(mouseClick);
+
+
+
+
+        }
+
+
+
+        private void mouseClick(object sender, MouseEventArgs e)
+        {
+            // int[] heroPosition;
+            if (e.Button == MouseButtons.Left)
+            {
+                switch (((CustomButton)sender).Tag.ToString())
+                {
+                    case "UpTag":
+                        Map = refreshMap(Map, 1, 0, 0, 0);
+                        SetBoxes = numberSetBoxes(Map, PointsList);
+                        updateInfo();
+                        if (CheckEndRound(SetBoxes, PointsList))
+                            endRound();
+                        break;
+                    case "DownTag":
+                        Map = refreshMap(Map, 0, 1, 0, 0);
+                        SetBoxes = numberSetBoxes(Map, PointsList);
+                        updateInfo();
+                        if (CheckEndRound(SetBoxes, PointsList))
+                            endRound();
+                        break;
+
+                    case "LeftTag":
+                        Map = refreshMap(Map, 0, 0, 1, 0);
+                        SetBoxes = numberSetBoxes(Map, PointsList);
+                        updateInfo();
+                        if (CheckEndRound(SetBoxes, PointsList))
+                            endRound();
+                        break;
+
+                    case "RightTag":
+                        Map = refreshMap(Map, 0, 0, 0, 1);
+                        SetBoxes = numberSetBoxes(Map, PointsList);
+                        updateInfo();
+                        if (CheckEndRound(SetBoxes, PointsList))
+                            endRound();
+                        break;
+                }
+            }
+        }
+
+
+        private void updateInfo()
+        {
+            if (numberSteps != previousNumberSteps)
+            {
+                StepsLabel.Text = numberSteps.ToString();
+                previousNumberSteps = numberSteps;
+            }
+            if (numberShiftsBoxes != previousnumberShiftsBoxes)
+            {
+                BoxesLabel.Text = numberShiftsBoxes.ToString();
+                previousnumberShiftsBoxes = numberShiftsBoxes; ;
+            }
+
+        }
+
         //POSTAC: 5
         //PUDELKO:6
         //PODLOGA:3
@@ -68,19 +272,33 @@ namespace Sokoban
         //PUNKT:4
         void initMap(string pathFileMap)
         {
+            initButtons();
+            PointsList = null;
+
+            numberSteps = 0;
+            numberShiftsBoxes = 0;
+
+            previousnumberShiftsBoxes = 0;
+            previousNumberSteps = 0;
+
+            SetBoxes = 0;
+            posX = 0;
+            posY = 0;
+            initLabels();
+
             readNumbers = readFile(pathFileMap);
             Map = new List<List<MapObject>>();
             PointsList = findPositionPoints(readNumbers);
             for (int i = 0; i < readNumbers.Count(); i++)
             {
-                
+
                 List<MapObject> initList = new List<MapObject>();
-                
+
                 for (int j = 0; j < readNumbers[i].Count(); j++)
                 {
 
 
-                    
+
                     if (readNumbers[i][j] == 5)
                     {
                         Hero newHero = new Hero(heightElement, widthElement, posX, posY);
@@ -88,7 +306,7 @@ namespace Sokoban
                         this.Controls.Add(newHero.picturebox);
                     }
 
-                    
+
                     if (readNumbers[i][j] == 6)
                     {
                         Box newBox = new Box(heightElement, widthElement, posX, posY);
@@ -96,7 +314,7 @@ namespace Sokoban
                         this.Controls.Add(newBox.picturebox);
                     }
 
-                   
+
                     if (readNumbers[i][j] == 1)
                     {
                         NullElement newNullElement = new NullElement();
@@ -104,7 +322,7 @@ namespace Sokoban
 
                     }
 
-                   
+
                     if (readNumbers[i][j] == 2)
                     {
                         Wall newWall = new Wall(heightElement, widthElement, posX, posY);
@@ -112,7 +330,7 @@ namespace Sokoban
                         this.Controls.Add(newWall.picturebox);
                     }
 
-                   
+
                     if (readNumbers[i][j] == 4)
                     {
                         EndPoint newEndPoint = new EndPoint(heightElement, widthElement, posX, posY);
@@ -120,36 +338,48 @@ namespace Sokoban
                         this.Controls.Add(newEndPoint.picturebox);
                     }
 
-                  
+
                     if (readNumbers[i][j] == 3)
                     {
-                       
-                        
-                        
-                        
+
+
+
+
                         Floor newFloor = new Floor(heightElement, widthElement, posX, posY);
                         initList.Add(newFloor);
                         this.Controls.Add(newFloor.picturebox);
                     }
-                    
+
 
 
                     posX = posX + 64;
 
-                    
-                
-                
+
+
+
                 }
                 posY = posY + 64;
                 posX = posX - (64 * initList.Count());
-                
+
                 Map.Add(initList);
             }
 
+            timer = new System.Timers.Timer(100);
+
+
+            timer.AutoReset = true;
+            timer.Elapsed += (s, e) => UpdateTime(e);
+            startTime = DateTime.Now;
+            timer.Start();
 
         }
 
-
+        private void UpdateTime(ElapsedEventArgs e)
+        {
+            elapsedTime = (DateTime.Now - startTime).ToString(@"mm\:ss");
+            // infoLabel.Text = elapsedTime;
+            TimeLabel.Text = elapsedTime;
+        }
 
 
         private List<List<MapObject>> refreshMap(List<List<MapObject>> map, int up, int down, int left, int right)
@@ -161,42 +391,49 @@ namespace Sokoban
             int[] heroPosition = findHeroPosition(map);
             if (up != 0)
             {
-                
+
                 if (map[heroPosition[0] - 1][heroPosition[1]].GetType() == typeof(Wall)) //gdy na gorze bedzie sciana
                 {
                     toReturn = map;
- 
+
                 }
                 if (map[heroPosition[0] - 1][heroPosition[1]].GetType() == typeof(Floor)) //gdy na gorze bedzie podloga
                 {
-                    help = map[heroPosition[0]-1][heroPosition[1]];
+                    help = map[heroPosition[0] - 1][heroPosition[1]];
                     map[heroPosition[0] - 1][heroPosition[1]] = map[heroPosition[0]][heroPosition[1]];
                     map[heroPosition[0]][heroPosition[1]] = help;
 
+
                     map[heroPosition[0] - 1][heroPosition[1]].setPosition(map[heroPosition[0] - 1][heroPosition[1]].getX(), (map[heroPosition[0] - 1][heroPosition[1]].getY() - heightElement));
                     map[heroPosition[0]][heroPosition[1]].setPosition(map[heroPosition[0]][heroPosition[1]].getX(), (map[heroPosition[0]][heroPosition[1]].getY() + heightElement));
+
+                    numberSteps++;
                     toReturn = map;
+
                 }
                 if (map[heroPosition[0] - 1][heroPosition[1]].GetType() == typeof(Box)) //gdy na gorze bedzie skrzynka
                 {
-                    if (map[heroPosition[0] - 2][heroPosition[1]].GetType() == typeof(Floor) || map[heroPosition[0] - 2][heroPosition[1]].GetType()==typeof(EndPoint)) //sprawdz czy mozna przesunac skrzynke(podloga lub punkt)
+                    if (map[heroPosition[0] - 2][heroPosition[1]].GetType() == typeof(Floor) || map[heroPosition[0] - 2][heroPosition[1]].GetType() == typeof(EndPoint)) //sprawdz czy mozna przesunac skrzynke(podloga lub punkt)
                     {
 
 
                         help = map[heroPosition[0]][heroPosition[1]];
                         map[heroPosition[0]][heroPosition[1]] = new Floor(heightElement, widthElement, heroPosition[1] * widthElement, heroPosition[0] * heightElement);
                         this.Controls.Add(map[heroPosition[0]][heroPosition[1]].picturebox);
-                        help2= map[heroPosition[0] - 1][heroPosition[1]];// = 5;
+                        help2 = map[heroPosition[0] - 1][heroPosition[1]];// = 5;
                         map[heroPosition[0] - 1][heroPosition[1]] = help;
-                        toRemove =map[heroPosition[0] - 2][heroPosition[1]];
-                        
+                        toRemove = map[heroPosition[0] - 2][heroPosition[1]];
+
                         map[heroPosition[0] - 2][heroPosition[1]] = help2;
-                        
+
 
                         map[heroPosition[0] - 1][heroPosition[1]].setPosition(map[heroPosition[0] - 1][heroPosition[1]].getX(), (map[heroPosition[0] - 1][heroPosition[1]].getY() - heightElement));
                         map[heroPosition[0] - 2][heroPosition[1]].setPosition(map[heroPosition[0] - 2][heroPosition[1]].getX(), (map[heroPosition[0] - 2][heroPosition[1]].getY() - heightElement));
 
                         this.Controls.Remove(toRemove.picturebox);
+
+                        numberSteps++;
+                        numberShiftsBoxes++;
                         toReturn = map;
                     }
                     else
@@ -212,10 +449,12 @@ namespace Sokoban
                     map[heroPosition[0]][heroPosition[1]] = new Floor(heightElement, widthElement, heroPosition[1] * widthElement, heroPosition[0] * heightElement);
                     this.Controls.Add(map[heroPosition[0]][heroPosition[1]].picturebox);
 
-                    toRemove=(map[heroPosition[0] - 1][heroPosition[1]]);
+                    toRemove = (map[heroPosition[0] - 1][heroPosition[1]]);
                     map[heroPosition[0] - 1][heroPosition[1]] = help;
                     map[heroPosition[0] - 1][heroPosition[1]].setPosition(map[heroPosition[0] - 1][heroPosition[1]].getX(), (map[heroPosition[0] - 1][heroPosition[1]].getY() - heightElement));
                     this.Controls.Remove(toRemove.picturebox);
+
+                    numberSteps++;
                     toReturn = map;
                 }
             }
@@ -243,6 +482,9 @@ namespace Sokoban
 
                     map[heroPosition[0] + 1][heroPosition[1]].setPosition(map[heroPosition[0] + 1][heroPosition[1]].getX(), (map[heroPosition[0] + 1][heroPosition[1]].getY() + heightElement));
                     map[heroPosition[0]][heroPosition[1]].setPosition(map[heroPosition[0]][heroPosition[1]].getX(), (map[heroPosition[0]][heroPosition[1]].getY() - heightElement));
+
+                    numberSteps++;
+
                     toReturn = map;
                 }
                 if (map[heroPosition[0] + 1][heroPosition[1]].GetType() == typeof(Box)) //gdy na dole bedzie skrzynka
@@ -256,7 +498,7 @@ namespace Sokoban
                         this.Controls.Add(map[heroPosition[0]][heroPosition[1]].picturebox);
                         help2 = map[heroPosition[0] + 1][heroPosition[1]];// = 5;
                         map[heroPosition[0] + 1][heroPosition[1]] = help;
-                        toRemove = (map[heroPosition[0]+2][heroPosition[1]]);
+                        toRemove = (map[heroPosition[0] + 2][heroPosition[1]]);
                         map[heroPosition[0] + 2][heroPosition[1]] = help2;
 
 
@@ -264,6 +506,9 @@ namespace Sokoban
                         map[heroPosition[0] + 2][heroPosition[1]].setPosition(map[heroPosition[0] + 2][heroPosition[1]].getX(), (map[heroPosition[0] + 2][heroPosition[1]].getY() + heightElement));
 
                         this.Controls.Remove(toRemove.picturebox);
+
+                        numberSteps++;
+                        numberShiftsBoxes++;
 
                         toReturn = map;
                     }
@@ -284,7 +529,10 @@ namespace Sokoban
                     map[heroPosition[0] + 1][heroPosition[1]] = help;
                     map[heroPosition[0] + 1][heroPosition[1]].setPosition(map[heroPosition[0] + 1][heroPosition[1]].getX(), (map[heroPosition[0] + 1][heroPosition[1]].getY() + heightElement));
                     this.Controls.Remove(toRemove.picturebox);
-                    
+
+                    numberSteps++;
+
+
                     toReturn = map;
                 }
             }
@@ -299,7 +547,7 @@ namespace Sokoban
             if (left != 0)
             {
 
-                if (map[heroPosition[0]][heroPosition[1]-1].GetType() == typeof(Wall)) //gdy na lewo bedzie sciana
+                if (map[heroPosition[0]][heroPosition[1] - 1].GetType() == typeof(Wall)) //gdy na lewo bedzie sciana
                 {
                     toReturn = map;
 
@@ -312,6 +560,9 @@ namespace Sokoban
 
                     map[heroPosition[0]][heroPosition[1] - 1].setPosition(map[heroPosition[0]][heroPosition[1] - 1].getX() - widthElement, (map[heroPosition[0]][heroPosition[1] - 1].getY()));
                     map[heroPosition[0]][heroPosition[1]].setPosition(map[heroPosition[0]][heroPosition[1]].getX() + widthElement, (map[heroPosition[0]][heroPosition[1]].getY()));
+
+                    numberSteps++;
+
                     toReturn = map;
                 }
                 if (map[heroPosition[0]][heroPosition[1] - 1].GetType() == typeof(Box)) //gdy na lewo bedzie skrzynka
@@ -325,7 +576,7 @@ namespace Sokoban
                         this.Controls.Add(map[heroPosition[0]][heroPosition[1]].picturebox);
                         help2 = map[heroPosition[0]][heroPosition[1] - 1];// = 5;
                         map[heroPosition[0]][heroPosition[1] - 1] = help;
-                        
+
                         toRemove = map[heroPosition[0]][heroPosition[1] - 2];
                         map[heroPosition[0]][heroPosition[1] - 2] = help2;
 
@@ -334,6 +585,10 @@ namespace Sokoban
                         map[heroPosition[0]][heroPosition[1] - 2].setPosition(map[heroPosition[0]][heroPosition[1] - 2].getX() - widthElement, (map[heroPosition[0]][heroPosition[1] - 2].getY()));
 
                         this.Controls.Remove(toRemove.picturebox);
+
+                        numberSteps++;
+                        numberShiftsBoxes++;
+
                         toReturn = map;
                     }
                     else
@@ -350,8 +605,12 @@ namespace Sokoban
                     this.Controls.Add(map[heroPosition[0]][heroPosition[1]].picturebox);
                     toRemove = map[heroPosition[0]][heroPosition[1] - 1];
                     map[heroPosition[0]][heroPosition[1] - 1] = help;
-                    map[heroPosition[0]][heroPosition[1] - 1].setPosition(map[heroPosition[0]][heroPosition[1] - 1].getX()-widthElement, (map[heroPosition[0]][heroPosition[1] - 1].getY()));
+                    map[heroPosition[0]][heroPosition[1] - 1].setPosition(map[heroPosition[0]][heroPosition[1] - 1].getX() - widthElement, (map[heroPosition[0]][heroPosition[1] - 1].getY()));
                     this.Controls.Remove(toRemove.picturebox);
+
+                    numberSteps++;
+
+
                     toReturn = map;
                 }
             }
@@ -377,6 +636,9 @@ namespace Sokoban
 
                     map[heroPosition[0]][heroPosition[1] + 1].setPosition(map[heroPosition[0]][heroPosition[1] + 1].getX() + widthElement, (map[heroPosition[0]][heroPosition[1] + 1].getY()));
                     map[heroPosition[0]][heroPosition[1]].setPosition(map[heroPosition[0]][heroPosition[1]].getX() - widthElement, (map[heroPosition[0]][heroPosition[1]].getY()));
+
+                    numberSteps++;
+
                     toReturn = map;
                 }
                 if (map[heroPosition[0]][heroPosition[1] + 1].GetType() == typeof(Box)) //gdy na prawo bedzie skrzynka
@@ -388,7 +650,7 @@ namespace Sokoban
                         help = map[heroPosition[0]][heroPosition[1]];
                         map[heroPosition[0]][heroPosition[1]] = new Floor(heightElement, widthElement, heroPosition[1] * widthElement, heroPosition[0] * heightElement);
                         this.Controls.Add(map[heroPosition[0]][heroPosition[1]].picturebox);
-                        
+
                         help2 = map[heroPosition[0]][heroPosition[1] + 1];// = 5;
                         map[heroPosition[0]][heroPosition[1] + 1] = help;
                         toRemove = map[heroPosition[0]][heroPosition[1] + 2];
@@ -399,6 +661,11 @@ namespace Sokoban
                         map[heroPosition[0]][heroPosition[1] + 2].setPosition(map[heroPosition[0]][heroPosition[1] + 2].getX() + widthElement, (map[heroPosition[0]][heroPosition[1] + 2].getY()));
 
                         this.Controls.Remove(toRemove.picturebox);
+
+                        numberSteps++;
+                        numberShiftsBoxes++;
+
+
                         toReturn = map;
                     }
                     else
@@ -413,10 +680,13 @@ namespace Sokoban
                     help = map[heroPosition[0]][heroPosition[1]];
                     map[heroPosition[0]][heroPosition[1]] = new Floor(heightElement, widthElement, heroPosition[1] * widthElement, heroPosition[0] * heightElement);
                     this.Controls.Add(map[heroPosition[0]][heroPosition[1]].picturebox);
-                    toRemove=map[heroPosition[0]][heroPosition[1] + 1];
+                    toRemove = map[heroPosition[0]][heroPosition[1] + 1];
                     map[heroPosition[0]][heroPosition[1] + 1] = help;
                     map[heroPosition[0]][heroPosition[1] + 1].setPosition(map[heroPosition[0]][heroPosition[1] + 1].getX() + widthElement, (map[heroPosition[0]][heroPosition[1] + 1].getY()));
                     this.Controls.Remove(toRemove.picturebox);
+
+                    numberSteps++;
+
                     toReturn = map;
                 }
             }
@@ -428,7 +698,7 @@ namespace Sokoban
                     int x = Map[p.X][p.Y].getX();
                     int y = Map[p.X][p.Y].getY();
                     toRemove = Map[p.X][p.Y];
-                    
+
                     Map[p.X][p.Y] = new EndPoint(heightElement, widthElement, x, y);
                     this.Controls.Add(Map[p.X][p.Y].picturebox);
                     this.Controls.Remove(toRemove.picturebox);
@@ -436,7 +706,7 @@ namespace Sokoban
             }
 
 
-        return toReturn;
+            return toReturn;
         }
 
 
@@ -449,7 +719,7 @@ namespace Sokoban
             for (int i = 0; i < map.Count(); i++)
             {
                 for (int j = 0; j < map[i].Count(); j++)
-                {                  
+                {
                     if (map[i][j].GetType() == t)
                     {
                         position[0] = i;
@@ -509,46 +779,78 @@ namespace Sokoban
 
         private void endRound()
         {
-            
-            this.Close();
-            
+            mapNumber++;
+            timer.Stop();
+
+            this.Controls.Clear();
+            initMap("sokoban_" + mapNumber + ".txt");
+            //  this.Close();
+
         }
+
+        private void pressEsc()
+        {
+            timer.Stop();
+            this.Hide();
+            DialogResult dialogResult = MessageBox.Show("Sure", "Some Title", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes)
+            {
+                this.Show();
+
+            }
+            else if (dialogResult == DialogResult.No)
+            {
+                //do something else
+            }
+        }
+
 
         private void Game_KeyDown(object sender, KeyEventArgs e)
         {
-           if(e.KeyValue==38) //gora
-           {
-               int[] heroPosition = findHeroPosition(Map);
-               Map = refreshMap(Map, 1, 0, 0, 0);
-               SetBoxes = numberSetBoxes(Map, PointsList);
-               if (CheckEndRound(SetBoxes, PointsList))
-                   endRound();
-           }
-           if (e.KeyValue == 40) //dol
-           {
-               int[] heroPosition = findHeroPosition(Map);
-               Map = refreshMap(Map, 0, 1, 0, 0);
-               SetBoxes = numberSetBoxes(Map, PointsList);
-               if (CheckEndRound(SetBoxes, PointsList))
-                   endRound();
-           }
-           if (e.KeyValue == 39) //prawo
-           {
-               int[] heroPosition = findHeroPosition(Map);
-               Map = refreshMap(Map, 0, 0, 0, 1);
-               SetBoxes = numberSetBoxes(Map, PointsList);
-               if (CheckEndRound(SetBoxes, PointsList))
-                   endRound();
-           }
+            if (e.KeyValue == 38) //gora
+            {
+                int[] heroPosition = findHeroPosition(Map);
+                Map = refreshMap(Map, 1, 0, 0, 0);
+                SetBoxes = numberSetBoxes(Map, PointsList);
+                updateInfo();
+                if (CheckEndRound(SetBoxes, PointsList))
+                    endRound();
+            }
+            if (e.KeyValue == 40) //dol
+            {
+                int[] heroPosition = findHeroPosition(Map);
+                Map = refreshMap(Map, 0, 1, 0, 0);
+                SetBoxes = numberSetBoxes(Map, PointsList);
+                updateInfo();
+                if (CheckEndRound(SetBoxes, PointsList))
+                    endRound();
+            }
+            if (e.KeyValue == 39) //prawo
+            {
+                int[] heroPosition = findHeroPosition(Map);
+                Map = refreshMap(Map, 0, 0, 0, 1);
+                SetBoxes = numberSetBoxes(Map, PointsList);
+                updateInfo();
+                if (CheckEndRound(SetBoxes, PointsList))
+                    endRound();
+            }
 
-           if (e.KeyValue == 37) //lewo
-           {
-               int[] heroPosition = findHeroPosition(Map);
-               Map = refreshMap(Map, 0, 0, 1, 0);
-               SetBoxes = numberSetBoxes(Map, PointsList);
-               if (CheckEndRound(SetBoxes, PointsList))
-                   endRound();
-           }
+            if (e.KeyValue == 37) //lewo
+            {
+                int[] heroPosition = findHeroPosition(Map);
+                Map = refreshMap(Map, 0, 0, 1, 0);
+                SetBoxes = numberSetBoxes(Map, PointsList);
+                updateInfo();
+                if (CheckEndRound(SetBoxes, PointsList))
+                    endRound();
+            }
+
+            if (e.KeyValue == 27) //escape
+            {
+                //pressEsc();
+                Environment.Exit(0);
+            }
+
         }
 
 
