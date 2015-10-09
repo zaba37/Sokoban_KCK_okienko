@@ -58,7 +58,7 @@ namespace Sokoban
 
         private Label BoxesLabel;
         private Point BoxesLabelLocation;
-
+        
 
         public Game()
         {
@@ -791,17 +791,28 @@ namespace Sokoban
         private void pressEsc()
         {
             timer.Stop();
+            pauseTime = DateTime.Now;
             this.Hide();
-            DialogResult dialogResult = MessageBox.Show("Sure", "Some Title", MessageBoxButtons.YesNo);
-            if (dialogResult == DialogResult.Yes)
+            Pause pauseWindow=new Pause();
+            pauseWindow.ShowDialog();
+            if (pauseWindow.flag == 1)
             {
+                var difference = DateTime.Now - pauseTime;
+                startTime = startTime.Add(difference);
+                
+                timer.Start();
                 this.Show();
+                
+            }
 
-            }
-            else if (dialogResult == DialogResult.No)
+            if (pauseWindow.flag == 2)
             {
-                //do something else
+                this.Controls.Clear();
+                initMap("sokoban_" + mapNumber + ".txt");
+                this.Show();
+                
             }
+
         }
 
 
@@ -847,8 +858,8 @@ namespace Sokoban
 
             if (e.KeyValue == 27) //escape
             {
-                //pressEsc();
-                Environment.Exit(0);
+               pressEsc();
+              //  Environment.Exit(0);
             }
 
         }

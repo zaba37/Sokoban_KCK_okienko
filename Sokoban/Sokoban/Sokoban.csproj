@@ -65,6 +65,12 @@
       <DependentUpon>Menu.cs</DependentUpon>
     </Compile>
     <Compile Include="NullElement.cs" />
+    <Compile Include="Pause.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pause.Designer.cs">
+      <DependentUpon>Pause.cs</DependentUpon>
+    </Compile>
     <Compile Include="PointPosition.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -74,11 +80,8 @@
     <Compile Include="Ranking.Designer.cs">
       <DependentUpon>Ranking.cs</DependentUpon>
     </Compile>
-
     <Compile Include="Wall.cs" />
-
     <Compile Include="SoundSingleton.cs" />
-
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
