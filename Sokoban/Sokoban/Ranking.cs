@@ -151,9 +151,25 @@ namespace Sokoban
             }
             this.Controls.Remove(RankingScoreLabel);
             this.Controls.Add(RankingScoreLabel);
-            
 
+        }
 
+        public void scrollRanking(int from, int to)
+        {
+            RankingScoreLabel.Text = null;
+            RankingNameLabel.Text = null;
+
+            for (int i = from; i < to; i++)
+            {
+                RankingScoreLabel.Text += RankingItemList[i].score + "\n";
+
+            }
+
+            for (int i = from; i < to; i++)
+            {
+                RankingNameLabel.Text += RankingItemList[i].name + "\n";
+
+            }
         }
 
 
@@ -213,6 +229,8 @@ namespace Sokoban
 
         }
 
+       
+
 
 
         private void mouseClick(object sender, MouseEventArgs e)
@@ -226,15 +244,16 @@ namespace Sokoban
                         {
                             from--;
                             to--;
-                            printRanking(from, to);
+                            scrollRanking(from, to);
                         }
                         break;
                     case "ArrowDownTag":
+                        RankingScoreLabel.Text = " ";
                         if (to < RankingItemList.Count())
                         {
                             from++;
                             to++;
-                            printRanking(from, to);
+                            scrollRanking(from, to);
                         }
                         break;
                     case "BackTag":
