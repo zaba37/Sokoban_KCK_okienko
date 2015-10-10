@@ -103,25 +103,28 @@ namespace Sokoban
 
         public void printRanking(int from, int to)
         {
-            RankingHeadLabelLocation = new Point(500, 350);
+            RankingHeadLabelLocation = new Point(512, 320);
             RankingHeadLabel = new Label();
-            RankingHeadLabel.Width = 350;
+            RankingHeadLabel.Width = 320;
             RankingHeadLabel.Height = 30;
-            RankingHeadLabel.Font = new Font("Serif", 24, FontStyle.Bold);
+            RankingHeadLabel.Font = new Font("Arial", 24, FontStyle.Bold);
             RankingHeadLabel.Location = RankingHeadLabelLocation;
             RankingHeadLabel.BackColor = System.Drawing.Color.Transparent;
-            RankingHeadLabel.Text = "Name     Score";
-            RankingHeadLabel.Parent = RankingBackground;
+            RankingHeadLabel.Text = "   Name         Score";
+            
+            RankingHeadLabel.ForeColor = System.Drawing.Color.Brown;
             this.Controls.Add(RankingHeadLabel);
 
-            RankingNameLabelLocation = new Point(500, 380);
+            RankingNameLabelLocation = new Point(512, 350);
             RankingNameLabel = new Label();
-            RankingNameLabel.Width = 175;
-            RankingNameLabel.Height = 300;
+            RankingNameLabel.Width = 160;
+            RankingNameLabel.Height = 290;
+            RankingNameLabel.TextAlign = ContentAlignment.TopCenter;
             RankingNameLabel.Font = new Font("Arial", 16, FontStyle.Bold);
+            RankingNameLabel.ForeColor = System.Drawing.Color.Black;
             RankingNameLabel.Location = RankingNameLabelLocation;
-            RankingNameLabel.Parent = RankingBackground;
             RankingNameLabel.BackColor = System.Drawing.Color.Transparent;
+            RankingNameLabel.Text = "";
             
             for (int i = from; i < to; i++)
             {
@@ -132,13 +135,13 @@ namespace Sokoban
             this.Controls.Add(RankingNameLabel);
 
 
-            RankingScoreLabelLocation = new Point(675, 380);
+            RankingScoreLabelLocation = new Point(672, 350);
             RankingScoreLabel = new Label();
-            RankingScoreLabel.Width = 175;
-            RankingScoreLabel.Height = 300;
+            RankingScoreLabel.Width = 160;
+            RankingScoreLabel.Height = 290;
+            RankingScoreLabel.TextAlign = ContentAlignment.TopCenter;
             RankingScoreLabel.Font = new Font("Arial", 16, FontStyle.Bold);
             RankingScoreLabel.Location = RankingScoreLabelLocation;
-            RankingScoreLabel.Parent = RankingBackground;
             RankingScoreLabel.BackColor = System.Drawing.Color.Transparent;
             RankingScoreLabel.Text = "";
             for (int i = from; i < to; i++)
@@ -146,7 +149,10 @@ namespace Sokoban
                 RankingScoreLabel.Text += RankingItemList[i].score + "\n";
 
             }
+            this.Controls.Remove(RankingScoreLabel);
             this.Controls.Add(RankingScoreLabel);
+            
+
 
         }
 
@@ -174,18 +180,25 @@ namespace Sokoban
             RankingBackground.Width = pngRankingBackground.Width;
             RankingBackground.Height = pngRankingBackground.Height;
             RankingBackground.Location = new Point(448, 256);
-            this.Controls.Add(RankingBackground);
+            
 
             this.DoubleBuffered = true;
 
             cbBack = new CustomButton(@"Buttons\RankingButtons\BackNormal.png", @"Buttons\RankingButtons\BackPress.png", @"Buttons\RankingButtons\BackFocus.png", 20, 660, "BackTag");
-
+            cbArrowUp = new CustomButton(@"Buttons\RankingButtons\UpNormal.png", @"Buttons\RankingButtons\UpPress.png", @"Buttons\RankingButtons\UpFocus.png", 920, 580, "ArrowUpTag");
+            cbArrowDown = new CustomButton(@"Buttons\RankingButtons\DownNormal.png", @"Buttons\RankingButtons\DownPress.png", @"Buttons\RankingButtons\DownFocus.png", 920, 680, "ArrowDownTag");
             this.BackgroundImage = new Bitmap(@"Drawable\Wall_Beige.png");
 
-            this.Controls.Add(logo);
+            
+            
             this.Controls.Add(cbBack);
+            this.Controls.Add(cbArrowUp);
+            this.Controls.Add(cbArrowDown);
 
             cbBack.MouseClick += new MouseEventHandler(mouseClick);
+            cbArrowUp.MouseClick += new MouseEventHandler(mouseClick);
+            cbArrowDown.MouseClick += new MouseEventHandler(mouseClick);
+
             if (RankingItemList.Count() > 11)
             {
                 printRanking(0, 11);
@@ -194,6 +207,9 @@ namespace Sokoban
             {
                 printRanking(0, RankingItemList.Count());
             }
+
+            this.Controls.Add(RankingBackground);
+            this.Controls.Add(logo);
 
         }
 
@@ -206,8 +222,20 @@ namespace Sokoban
                 switch (((CustomButton)sender).Tag.ToString())
                 {
                     case "ArrowUpTag":
+                        if (from > 0)
+                        {
+                            from--;
+                            to--;
+                            printRanking(from, to);
+                        }
                         break;
                     case "ArrowDownTag":
+                        if (to < RankingItemList.Count())
+                        {
+                            from++;
+                            to++;
+                            printRanking(from, to);
+                        }
                         break;
                     case "BackTag":
                         var menu = (Menu)Tag;
