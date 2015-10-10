@@ -58,6 +58,9 @@ namespace Sokoban
 
         private Label BoxesLabel;
         private Point BoxesLabelLocation;
+
+
+        
         
 
         public Game()
@@ -69,8 +72,8 @@ namespace Sokoban
             this.BackgroundImage = Image.FromFile(@"Map\Floor.png");
             this.DoubleBuffered = true;
 
-
-
+      
+            
 
             PointsList = null;
             SetBoxes = 0;
