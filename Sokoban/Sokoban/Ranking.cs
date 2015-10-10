@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing.Printing;
 using System.IO;
+using System.Linq;
 
 namespace Sokoban
 {
@@ -19,7 +20,15 @@ namespace Sokoban
         private PictureBox logo;
         public List<RankingItem> RankingItemList = new List<RankingItem>();
         private int from = 0;
-        private int to = 20;
+        private int to = 12;
+        private Label RankingHeadLabel;
+        private Point RankingHeadLabelLocation;
+        private Label RankingNameLabel;
+        private Point RankingNameLabelLocation;
+        private Label RankingScoreLabel;
+        private Point RankingScoreLabelLocation;
+        private Bitmap pngRankingBackground;
+        private PictureBox RankingBackground;
 
 
         public class RankingItem
@@ -36,7 +45,6 @@ namespace Sokoban
         }
         private void loadRanking()
         {
-
             string line;
             String fileName = @"ranking.txt";
             System.IO.StreamReader file;
@@ -93,34 +101,62 @@ namespace Sokoban
         }
         */
 
-
-
-        private void rankingListView()
+        public void printRanking(int from, int to)
         {
-            
-            ListView listView1 = new ListView();
-            listView1.Bounds = new Rectangle(new Point(500, 400), new Size(300, 200));
-            listView1.View = View.Details;
-            
-            foreach(RankingItem k in RankingItemList)
-            {
+            RankingHeadLabelLocation = new Point(500, 350);
+            RankingHeadLabel = new Label();
+            RankingHeadLabel.Width = 350;
+            RankingHeadLabel.Height = 30;
+            RankingHeadLabel.Font = new Font("Serif", 24, FontStyle.Bold);
+            RankingHeadLabel.Location = RankingHeadLabelLocation;
+            RankingHeadLabel.BackColor = System.Drawing.Color.Transparent;
+            RankingHeadLabel.Text = "Name     Score";
+            RankingHeadLabel.Parent = RankingBackground;
+            this.Controls.Add(RankingHeadLabel);
 
-                ListViewItem item1 = new ListViewItem(k.name, 0);
-                item1.SubItems.Add(Convert.ToString(k.score));
-                listView1.Items.AddRange(new ListViewItem[] { item1 });
+            RankingNameLabelLocation = new Point(500, 380);
+            RankingNameLabel = new Label();
+            RankingNameLabel.Width = 175;
+            RankingNameLabel.Height = 300;
+            RankingNameLabel.Font = new Font("Arial", 16, FontStyle.Bold);
+            RankingNameLabel.Location = RankingNameLabelLocation;
+            RankingNameLabel.Parent = RankingBackground;
+            RankingNameLabel.BackColor = System.Drawing.Color.Transparent;
+            
+            for (int i = from; i < to; i++)
+            {
+                RankingNameLabel.Text += RankingItemList[i].name + "\n";
+
             }
 
-            listView1.Columns.Add("name", -2, HorizontalAlignment.Left);
-            listView1.Columns.Add("score", -2, HorizontalAlignment.Left);
-            
-            Controls.Add(listView1);
+            this.Controls.Add(RankingNameLabel);
+
+
+            RankingScoreLabelLocation = new Point(675, 380);
+            RankingScoreLabel = new Label();
+            RankingScoreLabel.Width = 175;
+            RankingScoreLabel.Height = 300;
+            RankingScoreLabel.Font = new Font("Arial", 16, FontStyle.Bold);
+            RankingScoreLabel.Location = RankingScoreLabelLocation;
+            RankingScoreLabel.Parent = RankingBackground;
+            RankingScoreLabel.BackColor = System.Drawing.Color.Transparent;
+            RankingScoreLabel.Text = "";
+            for (int i = from; i < to; i++)
+            {
+                RankingScoreLabel.Text += RankingItemList[i].score + "\n";
+
+            }
+            this.Controls.Add(RankingScoreLabel);
+
         }
+
+
 
 
 
         public Ranking()
         {
-            
+            loadRanking();
             FormBorderStyle = FormBorderStyle.None;
             WindowState = FormWindowState.Maximized;
 
@@ -132,6 +168,14 @@ namespace Sokoban
             logo.Height = pngLogo.Height;
             logo.Location = new Point(290,20);
 
+            RankingBackground = new PictureBox();
+            pngRankingBackground = new Bitmap(@"Drawable\BackRanking.png");
+            RankingBackground.Image = pngRankingBackground;
+            RankingBackground.Width = pngRankingBackground.Width;
+            RankingBackground.Height = pngRankingBackground.Height;
+            RankingBackground.Location = new Point(448, 256);
+            this.Controls.Add(RankingBackground);
+
             this.DoubleBuffered = true;
 
             cbBack = new CustomButton(@"Buttons\RankingButtons\BackNormal.png", @"Buttons\RankingButtons\BackPress.png", @"Buttons\RankingButtons\BackFocus.png", 20, 660, "BackTag");
@@ -142,8 +186,14 @@ namespace Sokoban
             this.Controls.Add(cbBack);
 
             cbBack.MouseClick += new MouseEventHandler(mouseClick);
-            loadRanking();
-            rankingListView();
+            if (RankingItemList.Count() > 11)
+            {
+                printRanking(0, 11);
+            }
+            else
+            {
+                printRanking(0, RankingItemList.Count());
+            }
 
         }
 
