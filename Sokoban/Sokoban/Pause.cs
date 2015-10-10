@@ -26,19 +26,16 @@ namespace Sokoban
             this.BackgroundImage = new Bitmap(@"Drawable\Wall_Beige.png");
 
             logo = new PictureBox();
-            pngLogo = new Bitmap(@"Drawable\logoMenu.png");
+            pngLogo = new Bitmap(@"Drawable\logoPause.png");
             logo.BackColor = Color.Transparent;
             logo.Image = pngLogo;
             logo.Width = pngLogo.Width;
             logo.Height = pngLogo.Height;
-            logo.Location = new Point(250, 20);
+            logo.Location = new Point(380, 20);
 
-
-            
-            cbResume = new CustomButton(@"Buttons\MenuButtons\NewGameNormal.png", @"Buttons\MenuButtons\NewGamePress.png", @"Buttons\MenuButtons\NewGameFocus.png", 450, 350, "ResumeTag");
-            cbRestart= new CustomButton(@"Buttons\MenuButtons\RankingNormal.png", @"Buttons\MenuButtons\RankingPress.png", @"Buttons\MenuButtons\RankingFocus.png", 480, 450, "RestartTag");
-            cbExit = new CustomButton(@"Buttons\MenuButtons\ExitNormal.png", @"Buttons\MenuButtons\ExitPress.png", @"Buttons\MenuButtons\ExitFocus.png", 540, 550, "ExitTag");
-
+            cbResume = new CustomButton(@"Buttons\PauseButtons\ResumeNormal.png", @"Buttons\PauseButtons\ResumePress.png", @"Buttons\PauseButtons\ResumeFocus.png", 540, 350, "ResumeTag");
+            cbRestart = new CustomButton(@"Buttons\PauseButtons\RestartNormal.png", @"Buttons\PauseButtons\RestartPress.png", @"Buttons\PauseButtons\RestartFocus.png", 540, 450, "RestartTag");
+            cbExit = new CustomButton(@"Buttons\PauseButtons\ExitNormal.png", @"Buttons\PauseButtons\ExitPress.png", @"Buttons\PauseButtons\ExitFocus.png", 540, 550, "ExitTag");
 
            // this.Controls.Add(logo);
             this.Controls.Add(cbResume);
@@ -62,8 +59,12 @@ namespace Sokoban
                         flag = 1;
                       this.Close();
                         break;
+
                     case "ExitTag":
-                        Environment.Exit(0);
+                        flag = 3;
+                        this.Hide();
+                        var menu = (Menu)Tag;
+                        menu.Show();
                         break;
 
                     case "RestartTag":

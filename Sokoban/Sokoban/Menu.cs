@@ -28,7 +28,7 @@ namespace Sokoban
             FormBorderStyle = FormBorderStyle.None;
             WindowState = FormWindowState.Maximized;
 
-
+            this.DoubleBuffered = true;
 
             InitializeComponent();
 
@@ -75,8 +75,9 @@ namespace Sokoban
 
                     case "NewGameTag":
                         this.Hide();
-                        Game newGame = new Game();                       
-                        newGame.Show();
+                        Game newGame = new Game();
+                        newGame.Tag = this;
+                        newGame.Show(this);
                         
                         break;
                 }
