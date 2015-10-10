@@ -23,8 +23,6 @@ namespace Sokoban
             typewriter.PlayLooping();
 
             Application.Run(new Menu());
-            
-            
         }
     }
 }
