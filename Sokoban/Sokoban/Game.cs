@@ -14,6 +14,8 @@ namespace Sokoban
 {
     public partial class Game : Form
     {
+        Pause pauseWindow;
+
         private List<List<int>> readNumbers;
         List<List<MapObject>> Map;
         private int[] heroPosition;
@@ -69,17 +71,12 @@ namespace Sokoban
             this.BackgroundImage = Image.FromFile(@"Map\Floor.png");
             this.DoubleBuffered = true;
 
-
-
-
             PointsList = null;
             SetBoxes = 0;
             posX = 0;
             posY = 0;
             widthElement = 64;
             heightElement = 64;
-
-
 
             initMap("sokoban_1.txt");
         }
@@ -107,75 +104,63 @@ namespace Sokoban
 
         private void initLabels()
         {
-            infoTimeLabelLocation = new Point(800, 40);
+            infoTimeLabelLocation = new Point(1200, 40);
             infoTimeLabel = new Label();
             infoTimeLabel.Width = 100;
-            infoTimeLabel.Height = 100;
-            infoTimeLabel.Font = new Font(Font.Name, 22);
+            infoTimeLabel.Height = 30;
+            infoTimeLabel.Font = new Font(Font.Name, 16);
             infoTimeLabel.Location = infoTimeLabelLocation;
             infoTimeLabel.BackColor = System.Drawing.Color.Transparent;
+           // infoTimeLabel.Image = new Bitmap(@"Drawable\Wall_Gray.png");
             infoTimeLabel.Text = "Time: ";
             this.Controls.Add(infoTimeLabel);
 
-
-
-            TimeLabelLocation = new Point(900, 40);
+            TimeLabelLocation = new Point(1300, 40);
             TimeLabel = new Label();
             TimeLabel.Width = 100;
-            TimeLabel.Height = 100;
-            TimeLabel.Font = new Font(Font.Name, 22);
+            TimeLabel.Height = 30;
+            TimeLabel.Font = new Font(Font.Name, 16);
             TimeLabel.Location = TimeLabelLocation;
             TimeLabel.BackColor = System.Drawing.Color.Transparent;
             TimeLabel.Text = "00:00";
             this.Controls.Add(TimeLabel);
 
-
-
-
-
-
-
-            infoStepsLabelLocation = new Point(800, 140);
+            infoStepsLabelLocation = new Point(1200, 70);
             infoStepsLabel = new Label();
-            infoStepsLabel.Width = 300;
-            infoStepsLabel.Height = 100;
-            infoStepsLabel.Font = new Font(Font.Name, 22);
+            infoStepsLabel.Width = 100;
+            infoStepsLabel.Height = 30;
+            infoStepsLabel.Font = new Font(Font.Name, 16);
             infoStepsLabel.Location = infoStepsLabelLocation;
             infoStepsLabel.BackColor = System.Drawing.Color.Transparent;
             infoStepsLabel.Text = "steps: ";
             this.Controls.Add(infoStepsLabel);
 
-
-
-
-            StepsLabelLocation = new Point(1100, 140);
+            StepsLabelLocation = new Point(1300, 70);
             StepsLabel = new Label();
             StepsLabel.Width = 100;
-            StepsLabel.Height = 100;
-            StepsLabel.Font = new Font(Font.Name, 22);
+            StepsLabel.Height = 30;
+            StepsLabel.Font = new Font(Font.Name, 16);
             StepsLabel.Location = StepsLabelLocation;
             StepsLabel.BackColor = System.Drawing.Color.Transparent;
             StepsLabel.Text = "0";
             this.Controls.Add(StepsLabel);
 
 
-
-            infoBoxesLabelLocation = new Point(800, 240);
+            infoBoxesLabelLocation = new Point(1200, 100);
             infoBoxesLabel = new Label();
-            infoBoxesLabel.Width = 300;
-            infoBoxesLabel.Height = 100;
-            infoBoxesLabel.Font = new Font(Font.Name, 22);
+            infoBoxesLabel.Width = 100;
+            infoBoxesLabel.Height = 30;
+            infoBoxesLabel.Font = new Font(Font.Name, 16);
             infoBoxesLabel.Location = infoBoxesLabelLocation;
             infoBoxesLabel.BackColor = System.Drawing.Color.Transparent;
             infoBoxesLabel.Text = "boxes: ";
             this.Controls.Add(infoBoxesLabel);
 
-
-            BoxesLabelLocation = new Point(1100, 240);
+            BoxesLabelLocation = new Point(1300, 100);
             BoxesLabel = new Label();
             BoxesLabel.Width = 100;
-            BoxesLabel.Height = 100;
-            BoxesLabel.Font = new Font(Font.Name, 22);
+            BoxesLabel.Height = 30;
+            BoxesLabel.Font = new Font(Font.Name, 16);
             BoxesLabel.Location = BoxesLabelLocation;
             BoxesLabel.BackColor = System.Drawing.Color.Transparent;
             BoxesLabel.Text = "0";
@@ -186,10 +171,10 @@ namespace Sokoban
 
         private void initButtons()
         {
-            cbArrowUp = new CustomButton(@"Map\Wall.png", @"Map\Wall.png", @"Map\Wall.png", 700, 550, "UpTag");
-            cbArrowDown = new CustomButton(@"Map\Wall.png", @"Map\Wall.png", @"Map\Wall.png", 750, 590, "DownTag");
-            cbArrowRight = new CustomButton(@"Map\Wall.png", @"Map\Wall.png", @"Map\Wall.png", 800, 550, "RightTag");
-            cbArrowLeft = new CustomButton(@"Map\Wall.png", @"Map\Wall.png", @"Map\Wall.png", 840, 600, "LeftTag");
+            cbArrowUp = new CustomButton(@"Buttons\GameButtons\UpNormal.png", @"Buttons\GameButtons\UpPress.png", @"Buttons\GameButtons\UpFocus.png", 1200, 550, "UpTag");
+            cbArrowDown = new CustomButton(@"Buttons\GameButtons\DownNormal.png", @"Buttons\GameButtons\DownPress.png", @"Buttons\GameButtons\DownFocus.png", 1200, 620, "DownTag");
+            cbArrowRight = new CustomButton(@"Buttons\GameButtons\RightNormal.png", @"Buttons\GameButtons\RightPress.png", @"Buttons\GameButtons\RightFocus.png", 1270, 620, "RightTag");
+            cbArrowLeft = new CustomButton(@"Buttons\GameButtons\LeftNormal.png", @"Buttons\GameButtons\LeftPress.png", @"Buttons\GameButtons\LeftFocus.png", 1130, 620, "LeftTag");
 
             this.Controls.Add(cbArrowUp);
             this.Controls.Add(cbArrowDown);
@@ -200,13 +185,7 @@ namespace Sokoban
             cbArrowDown.MouseClick += new MouseEventHandler(mouseClick);
             cbArrowRight.MouseClick += new MouseEventHandler(mouseClick);
             cbArrowLeft.MouseClick += new MouseEventHandler(mouseClick);
-
-
-
-
         }
-
-
 
         private void mouseClick(object sender, MouseEventArgs e)
         {
@@ -297,8 +276,6 @@ namespace Sokoban
                 for (int j = 0; j < readNumbers[i].Count(); j++)
                 {
 
-
-
                     if (readNumbers[i][j] == 5)
                     {
                         Hero newHero = new Hero(heightElement, widthElement, posX, posY);
@@ -342,20 +319,12 @@ namespace Sokoban
                     if (readNumbers[i][j] == 3)
                     {
 
-
-
-
                         Floor newFloor = new Floor(heightElement, widthElement, posX, posY);
                         initList.Add(newFloor);
                         this.Controls.Add(newFloor.picturebox);
                     }
 
-
-
                     posX = posX + 64;
-
-
-
 
                 }
                 posY = posY + 64;
@@ -371,7 +340,6 @@ namespace Sokoban
             timer.Elapsed += (s, e) => UpdateTime(e);
             startTime = DateTime.Now;
             timer.Start();
-
         }
 
         private void UpdateTime(ElapsedEventArgs e)
@@ -459,13 +427,6 @@ namespace Sokoban
                 }
             }
 
-
-
-
-
-
-
-
             if (down != 0)
             {
 
@@ -537,13 +498,6 @@ namespace Sokoban
                 }
             }
 
-
-
-
-
-
-
-
             if (left != 0)
             {
 
@@ -614,11 +568,6 @@ namespace Sokoban
                     toReturn = map;
                 }
             }
-
-
-
-
-
 
             if (right != 0)
             {
@@ -704,13 +653,8 @@ namespace Sokoban
                     this.Controls.Remove(toRemove.picturebox);
                 }
             }
-
-
             return toReturn;
         }
-
-
-
 
         private int[] findHeroPosition(List<List<MapObject>> map)
         {
@@ -731,9 +675,6 @@ namespace Sokoban
             return position;
         }
 
-
-
-
         private int numberSetBoxes(List<List<MapObject>> map, List<PointPosition> listPoints)
         {
             int number = 0;
@@ -745,11 +686,6 @@ namespace Sokoban
             return number;
         }
 
-
-
-
-
-
         private bool CheckEndRound(int numberSetBox, List<PointPosition> PointsPositionList)
         {
             bool endRound = false;
@@ -758,6 +694,7 @@ namespace Sokoban
 
             return endRound;
         }
+
         private List<PointPosition> findPositionPoints(List<List<int>> map)
         {
             List<PointPosition> positionsList = new List<PointPosition>();
@@ -776,7 +713,6 @@ namespace Sokoban
             return positionsList;
         }
 
-
         private void endRound()
         {
             mapNumber++;
@@ -785,16 +721,24 @@ namespace Sokoban
             this.Controls.Clear();
             initMap("sokoban_" + mapNumber + ".txt");
             //  this.Close();
-
         }
 
         private void pressEsc()
         {
             timer.Stop();
             pauseTime = DateTime.Now;
+            //this.Hide();
+            
+            if (pauseWindow == null)
+            {
+                pauseWindow = new Pause();
+                pauseWindow.Tag = Tag;
+            }
+          
             this.Hide();
-            Pause pauseWindow=new Pause();
+            
             pauseWindow.ShowDialog();
+
             if (pauseWindow.flag == 1)
             {
                 var difference = DateTime.Now - pauseTime;
@@ -802,7 +746,6 @@ namespace Sokoban
                 
                 timer.Start();
                 this.Show();
-                
             }
 
             if (pauseWindow.flag == 2)
@@ -810,11 +753,12 @@ namespace Sokoban
                 this.Controls.Clear();
                 initMap("sokoban_" + mapNumber + ".txt");
                 this.Show();
-                
             }
 
+            if(pauseWindow.flag == 3){
+                this.Close();
+            }
         }
-
 
         private void Game_KeyDown(object sender, KeyEventArgs e)
         {
@@ -863,7 +807,5 @@ namespace Sokoban
             }
 
         }
-
-
     }
 }
