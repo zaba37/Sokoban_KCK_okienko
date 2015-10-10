@@ -43,6 +43,7 @@ namespace Sokoban
             }
 
         }
+
         private void loadRanking()
         {
             string line;
@@ -131,7 +132,6 @@ namespace Sokoban
 
             this.Controls.Add(RankingNameLabel);
 
-
             RankingScoreLabelLocation = new Point(675, 380);
             RankingScoreLabel = new Label();
             RankingScoreLabel.Width = 175;
@@ -149,10 +149,6 @@ namespace Sokoban
             this.Controls.Add(RankingScoreLabel);
 
         }
-
-
-
-
 
         public Ranking()
         {
@@ -186,6 +182,7 @@ namespace Sokoban
             this.Controls.Add(cbBack);
 
             cbBack.MouseClick += new MouseEventHandler(mouseClick);
+
             if (RankingItemList.Count() > 11)
             {
                 printRanking(0, 11);
@@ -194,7 +191,6 @@ namespace Sokoban
             {
                 printRanking(0, RankingItemList.Count());
             }
-
         }
 
 

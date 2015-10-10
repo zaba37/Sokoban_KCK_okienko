@@ -25,8 +25,6 @@ namespace Sokoban
             point = new Point(this.posX, this.posY);
             picturebox.Image = this.graphics;
             picturebox.Location = point;
-
-  
         }
 
       override  public void setPosition(int x, int y)
