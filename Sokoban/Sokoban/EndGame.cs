@@ -95,20 +95,18 @@ namespace Sokoban
         {
             if (e.Button == MouseButtons.Left)
             {
+                var menu2 = (Menu)Tag;
+
                 switch (((CustomButton)sender).Tag.ToString())
                 {
                     case "SaveTag":
-                        saveRanking(nameTb.Text, Points);
-                        // var menu2 = (Menu)Tag;
-                        // menu2.Show();
-                        // this.Close();
-                        Environment.Exit(0);
+                         saveRanking(nameTb.Text, Points);
+                         menu2.Show();
+                         this.Close();
                         break;
                     case "ExitTag":
-                        //this.Close();
-                        //var menu = (Menu)Tag;
-                        //menu.Show();
-                        Environment.Exit(0);
+                        menu2.Show();
+                        this.Close();
                         break;
                 }
             }

@@ -88,8 +88,10 @@ namespace Sokoban
             this.BackgroundImage = Image.FromFile(@"Map\Floor.png");
             this.DoubleBuffered = true;
 
-            mapNumber = 1;
-            numberOfMap = 2;  //ILOSC MAP
+            mapNumber = 9;
+
+            numberOfMap = 6;  //ILOSC MAP
+
 
             PointsList = null;
             SetBoxes = 0;
@@ -863,10 +865,10 @@ namespace Sokoban
                 pauseWindow.Tag = Tag;
             }
 
+
             this.Hide();
-
             pauseWindow.ShowDialog();
-
+            
             if (pauseWindow.flag == 1)
             {
                 var difference = DateTime.Now - pauseTime;
@@ -922,7 +924,12 @@ namespace Sokoban
             if (totalPoints < 0)
                 totalPoints = 0;
 
+            typewriter.Stop();
+            typewriter.SoundLocation = @"Music\mainMusic.wav";
+            typewriter.PlayLooping();
+
             EndGame endGameWindow = new EndGame(totalPoints);
+            endGameWindow.Tag = this.Tag;
             endGameWindow.Show();
             this.Close();
         }

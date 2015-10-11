@@ -36,4 +36,23 @@ fdggfdgdfgfd 20
 Testujem 100
 test321 97
 ghghghghgh 100
+<<<<<<< HEAD
 AbcD 192
+=======
+zaba 96
+zaba2 96
+asdasd 96
+kkk 96
+sss 94
+sss 96
+sss 94
+sss 96
+aaaa 96
+szz 93
+sss 96
+xxx 96
+sss 96
+aaa 47
+sss 377
+>>>>>>> 80b810c6e34fa25dc16340ab7a0db8ed92c846e9
+ 96

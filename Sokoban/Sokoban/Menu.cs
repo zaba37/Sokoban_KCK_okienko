@@ -69,16 +69,17 @@ namespace Sokoban
                         ranking.Show(this);
                         this.Hide();
                         break;
+
                     case "ExitTag":
                         Application.Exit();
                         break;
 
                     case "NewGameTag":
-                        this.Hide();
+                        
                         Game newGame = new Game();
                         newGame.Tag = this;
                         newGame.Show(this);
-                        
+                        this.Hide();
                         break;
                 }
             }
