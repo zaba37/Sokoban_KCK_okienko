@@ -57,7 +57,7 @@ namespace Sokoban
                 {
                     case "ResumeTag":
                         flag = 1;
-                      this.Close();
+                        this.Close();
                         break;
 
                     case "ExitTag":

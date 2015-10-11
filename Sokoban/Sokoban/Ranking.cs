@@ -175,10 +175,10 @@ namespace Sokoban
 
         public Ranking()
         {
-            loadRanking();
+            
             FormBorderStyle = FormBorderStyle.None;
             WindowState = FormWindowState.Maximized;
-
+            loadRanking();
             pngLogo = new Bitmap(@"Drawable\logoRanking.png");
             logo = new PictureBox();
             logo.BackColor = Color.Transparent;
@@ -203,8 +203,10 @@ namespace Sokoban
             this.BackgroundImage = new Bitmap(@"Drawable\Wall_Beige.png");
 
             this.Controls.Add(cbBack);
+
             this.Controls.Add(cbArrowUp);
             this.Controls.Add(cbArrowDown);
+
 
             cbBack.MouseClick += new MouseEventHandler(mouseClick);
 
@@ -220,8 +222,10 @@ namespace Sokoban
                 printRanking(0, RankingItemList.Count());
             }
 
+
             this.Controls.Add(RankingBackground);
             this.Controls.Add(logo);
+
 
         }
 
