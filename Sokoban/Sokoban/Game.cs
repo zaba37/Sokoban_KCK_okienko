@@ -66,7 +66,6 @@ namespace Sokoban
 
         private PictureBox[] startScreen;
         private CustomButton cbStart;
-        
 
         public Game()
         {

@@ -18,6 +18,7 @@ namespace Sokoban
         private PictureBox logo;
         private Bitmap pngMSG;
         private PictureBox logoMSG;
+        private PictureBox logoEnterName;
       
 
         public EndGame()
@@ -42,6 +43,13 @@ namespace Sokoban
             logoMSG.Height = pngMSG.Height;
             logoMSG.Location = new Point(160, 300);
 
+            logoEnterName = new PictureBox();
+            logoEnterName.Image = new Bitmap(@"Drawable\logoEnterName.png");
+            logoEnterName.Width = logoEnterName.Image.Width;
+            logoEnterName.Height = logoEnterName.Image.Height;
+            logoEnterName.Location = new Point(350, 450);
+            logoEnterName.BackColor = Color.Transparent;
+
             this.BackgroundImage = new Bitmap(@"Drawable\Wall_Beige.png");
 
             cbExit = new CustomButton(@"Buttons\EndGameButtons\ExitNormal.png", @"Buttons\EndGameButtons\ExitPress.png", @"Buttons\EndGameButtons\ExitFocus.png", 1050, 650, "ExitTag");
@@ -51,6 +59,7 @@ namespace Sokoban
             this.Controls.Add(logo);
             this.Controls.Add(cbExit);
             this.Controls.Add(cbSave);
+            this.Controls.Add(logoEnterName);
         }
     }
 }
