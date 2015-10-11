@@ -88,8 +88,8 @@ namespace Sokoban
             this.BackgroundImage = Image.FromFile(@"Map\Floor.png");
             this.DoubleBuffered = true;
 
-            mapNumber = 9;
-            numberOfMap = 9;  //ILOSC MAP
+            mapNumber = 1;
+            numberOfMap = 2;  //ILOSC MAP
 
             PointsList = null;
             SetBoxes = 0;
