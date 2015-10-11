@@ -5,22 +5,30 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
 using System.Windows.Input;
+
 namespace Sokoban
 {
     public partial class Game : Form
-    {
+    {   
+        SoundPlayer typewriter = SoundSingleton.getSoundPlayerInstance();
         Pause pauseWindow;
 
         private List<List<int>> readNumbers;
         List<List<MapObject>> Map;
-        private int[] heroPosition;
+        
 
         private int mapNumber = 1;
+        private int numberOfMap = 1;
+
+
+        private int totalPoints;
+
         private int posX;
         private int posY;
         List<PointPosition> PointsList;
@@ -62,7 +70,9 @@ namespace Sokoban
         private Point BoxesLabelLocation;
 
 
-        
+        private PictureBox[] startScreen;
+        private CustomButton cbStart;
+
         
 
         public Game()
@@ -81,6 +91,40 @@ namespace Sokoban
             posY = 0;
             widthElement = 64;
             heightElement = 64;
+            totalPoints = 0;
+
+            typewriter.Stop();
+            typewriter.SoundLocation = @"Music\step.wav";
+
+            startScreen = new PictureBox[9];
+            startScreen[0] = new PictureBox();
+            startScreen[0].Image = new Bitmap(@"Drawable\L1.png");
+            startScreen[1] = new PictureBox();
+            startScreen[1].Image = new Bitmap(@"Drawable\L2.png");
+            startScreen[2] = new PictureBox();
+            startScreen[2].Image = new Bitmap(@"Drawable\L3.png");
+            startScreen[3] = new PictureBox();
+            startScreen[3].Image = new Bitmap(@"Drawable\L4.png");
+            startScreen[4] = new PictureBox();
+            startScreen[4].Image = new Bitmap(@"Drawable\L5.png");
+            startScreen[5] = new PictureBox();
+            startScreen[5].Image = new Bitmap(@"Drawable\L6.png");
+            startScreen[6] = new PictureBox();
+            startScreen[6].Image = new Bitmap(@"Drawable\L7.png");
+            startScreen[7] = new PictureBox();
+            startScreen[7].Image = new Bitmap(@"Drawable\L8.png");
+            startScreen[8] = new PictureBox();
+            startScreen[8].Image = new Bitmap(@"Drawable\L9.png");
+
+            foreach(PictureBox start in startScreen){
+                start.Location = new Point(250,150);
+                start.Height = start.Image.Height;
+                start.Width = start.Image.Width;
+                start.BackColor = Color.Transparent;
+            }
+
+            cbStart = new CustomButton(@"Buttons\GameButtons\StartNormal.png", @"Buttons\GameButtons\StartPress.png", @"Buttons\GameButtons\StartFocus.png", 550, 380, "StartTag");
+            cbStart.MouseClick += new MouseEventHandler(mouseClick);
 
             initMap("sokoban_1.txt");
         }
@@ -89,7 +133,8 @@ namespace Sokoban
 
         private List<List<int>> readFile(string path)
         {
-            List<List<int>> intMap = null; ;
+            List<List<int>> intMap = null; 
+
             try
             {
                 var lines = File.ReadAllLines(path);
@@ -97,7 +142,6 @@ namespace Sokoban
                 intMap = map.Select(l => l.Select(i => int.Parse(i)).ToList()).ToList();
                 return intMap;
             }
-
             catch
             {
                 Environment.Exit(0);
@@ -169,7 +213,6 @@ namespace Sokoban
             BoxesLabel.BackColor = System.Drawing.Color.Transparent;
             BoxesLabel.Text = "0";
             this.Controls.Add(BoxesLabel);
-
         }
 
 
@@ -184,11 +227,6 @@ namespace Sokoban
             this.Controls.Add(cbArrowDown);
             this.Controls.Add(cbArrowRight);
             this.Controls.Add(cbArrowLeft);
-
-            cbArrowUp.MouseClick += new MouseEventHandler(mouseClick);
-            cbArrowDown.MouseClick += new MouseEventHandler(mouseClick);
-            cbArrowRight.MouseClick += new MouseEventHandler(mouseClick);
-            cbArrowLeft.MouseClick += new MouseEventHandler(mouseClick);
         }
 
         private void mouseClick(object sender, MouseEventArgs e)
@@ -202,6 +240,7 @@ namespace Sokoban
                         Map = refreshMap(Map, 1, 0, 0, 0);
                         SetBoxes = numberSetBoxes(Map, PointsList);
                         updateInfo();
+                        typewriter.Play();
                         if (CheckEndRound(SetBoxes, PointsList))
                             endRound();
                         break;
@@ -209,6 +248,7 @@ namespace Sokoban
                         Map = refreshMap(Map, 0, 1, 0, 0);
                         SetBoxes = numberSetBoxes(Map, PointsList);
                         updateInfo();
+                        typewriter.Play();
                         if (CheckEndRound(SetBoxes, PointsList))
                             endRound();
                         break;
@@ -217,6 +257,7 @@ namespace Sokoban
                         Map = refreshMap(Map, 0, 0, 1, 0);
                         SetBoxes = numberSetBoxes(Map, PointsList);
                         updateInfo();
+                        typewriter.Play();
                         if (CheckEndRound(SetBoxes, PointsList))
                             endRound();
                         break;
@@ -225,8 +266,21 @@ namespace Sokoban
                         Map = refreshMap(Map, 0, 0, 0, 1);
                         SetBoxes = numberSetBoxes(Map, PointsList);
                         updateInfo();
+                        typewriter.Play();
                         if (CheckEndRound(SetBoxes, PointsList))
                             endRound();
+                        break;
+
+                    case "StartTag":              
+                        timer.AutoReset = true;
+                        startTime = DateTime.Now;
+                        timer.Start();
+                        startScreen[mapNumber - 1].Hide();
+                        cbStart.Hide();
+                        cbArrowUp.MouseClick += new MouseEventHandler(mouseClick);
+                        cbArrowDown.MouseClick += new MouseEventHandler(mouseClick);
+                        cbArrowRight.MouseClick += new MouseEventHandler(mouseClick);
+                        cbArrowLeft.MouseClick += new MouseEventHandler(mouseClick);
                         break;
                 }
             }
@@ -240,12 +294,12 @@ namespace Sokoban
                 StepsLabel.Text = numberSteps.ToString();
                 previousNumberSteps = numberSteps;
             }
+
             if (numberShiftsBoxes != previousnumberShiftsBoxes)
             {
                 BoxesLabel.Text = numberShiftsBoxes.ToString();
                 previousnumberShiftsBoxes = numberShiftsBoxes; ;
             }
-
         }
 
         //POSTAC: 5
@@ -255,6 +309,10 @@ namespace Sokoban
         //PUNKT:4
         void initMap(string pathFileMap)
         {
+            this.Controls.Add(cbStart);
+            cbStart.Show();
+            this.Controls.Add(startScreen[mapNumber - 1]);
+            startScreen[mapNumber - 1].Show();
             initButtons();
             PointsList = null;
 
@@ -272,6 +330,7 @@ namespace Sokoban
             readNumbers = readFile(pathFileMap);
             Map = new List<List<MapObject>>();
             PointsList = findPositionPoints(readNumbers);
+
             for (int i = 0; i < readNumbers.Count(); i++)
             {
 
@@ -338,12 +397,7 @@ namespace Sokoban
             }
 
             timer = new System.Timers.Timer(100);
-
-
-            timer.AutoReset = true;
             timer.Elapsed += (s, e) => UpdateTime(e);
-            startTime = DateTime.Now;
-            timer.Start();
         }
 
         private void UpdateTime(ElapsedEventArgs e)
@@ -361,6 +415,7 @@ namespace Sokoban
             MapObject toRemove;
             List<List<MapObject>> toReturn = new List<List<MapObject>>();
             int[] heroPosition = findHeroPosition(map);
+
             if (up != 0)
             {
 
@@ -568,7 +623,6 @@ namespace Sokoban
 
                     numberSteps++;
 
-
                     toReturn = map;
                 }
             }
@@ -642,6 +696,7 @@ namespace Sokoban
 
                     toReturn = map;
                 }
+
             }
 
             foreach (PointPosition p in PointsList)
@@ -657,6 +712,7 @@ namespace Sokoban
                     this.Controls.Remove(toRemove.picturebox);
                 }
             }
+
             return toReturn;
         }
 
@@ -719,20 +775,39 @@ namespace Sokoban
 
         private void endRound()
         {
-            mapNumber++;
             timer.Stop();
+            mapNumber++;
+            
+
+            DateTime ElapsedTime = DateTime.Parse(elapsedTime);
+            int totalSeconds = (ElapsedTime.Hour * 360) + (ElapsedTime.Minute * 60) + ElapsedTime.Second;
+            if (totalSeconds < 20)
+                totalPoints = totalPoints + 100;
+            if (totalSeconds >= 20 && totalSeconds <= 40)
+                totalPoints = totalPoints + 50;
+            if (totalSeconds > 40)
+                totalPoints = totalPoints + 20;
+            double pointsForSteps = ((double)numberSteps) * 0.1;
+
+            totalPoints = totalPoints - (int)pointsForSteps;
+            if (totalPoints < 0)
+                totalPoints = 0;
+
 
             this.Controls.Clear();
             initMap("sokoban_" + mapNumber + ".txt");
-            //  this.Close();
         }
 
         private void pressEsc()
         {
+            
             timer.Stop();
             pauseTime = DateTime.Now;
-            //this.Hide();
-            
+
+            typewriter.Stop();
+            typewriter.SoundLocation = @"Music\pauseMusic.wav";
+            typewriter.PlayLooping();
+
             if (pauseWindow == null)
             {
                 pauseWindow = new Pause();
@@ -747,7 +822,10 @@ namespace Sokoban
             {
                 var difference = DateTime.Now - pauseTime;
                 startTime = startTime.Add(difference);
-                
+
+                typewriter.Stop();
+                typewriter.SoundLocation = @"Music\step.wav";
+
                 timer.Start();
                 this.Show();
             }
@@ -755,13 +833,47 @@ namespace Sokoban
             if (pauseWindow.flag == 2)
             {
                 this.Controls.Clear();
+
+                typewriter.Stop();
+                typewriter.SoundLocation = @"Music\step.wav";
+
+
+                double pointsForSteps = ((double)numberSteps) * 0.1;
+                totalPoints = totalPoints - (int)pointsForSteps;
+
                 initMap("sokoban_" + mapNumber + ".txt");
                 this.Show();
             }
 
             if(pauseWindow.flag == 3){
+                typewriter.Stop();
+                typewriter.SoundLocation = @"Music\mainMusic.wav";
+                typewriter.PlayLooping();
                 this.Close();
             }
+        }
+
+
+        private void endgame()
+        {
+            timer.Stop();
+            DateTime ElapsedTime = DateTime.Parse(elapsedTime);
+            int totalSeconds = (ElapsedTime.Hour * 360) + (ElapsedTime.Minute * 60) + ElapsedTime.Second;
+            if (totalSeconds < 20)
+                totalPoints = totalPoints + 100;
+            if (totalSeconds >= 20 && totalSeconds <= 40)
+                totalPoints = totalPoints + 50;
+            if (totalSeconds > 40)
+                totalPoints = totalPoints + 20;
+            double pointsForSteps = ((double)numberSteps) * 0.1;
+
+            totalPoints = totalPoints - (int)pointsForSteps;
+            if (totalPoints < 0)
+                totalPoints = 0;
+            
+            EndGame endGameWindow = new EndGame(totalPoints);
+            endGameWindow.Show();
+            this.Close();
         }
 
         private void Game_KeyDown(object sender, KeyEventArgs e)
@@ -773,7 +885,11 @@ namespace Sokoban
                 SetBoxes = numberSetBoxes(Map, PointsList);
                 updateInfo();
                 if (CheckEndRound(SetBoxes, PointsList))
+                {
+                    if (mapNumber == numberOfMap)
+                        endgame();
                     endRound();
+                }
             }
             if (e.KeyValue == 40) //dol
             {
@@ -782,7 +898,12 @@ namespace Sokoban
                 SetBoxes = numberSetBoxes(Map, PointsList);
                 updateInfo();
                 if (CheckEndRound(SetBoxes, PointsList))
+                {
+                    if (mapNumber == numberOfMap)
+                        endgame();
                     endRound();
+                }
+
             }
             if (e.KeyValue == 39) //prawo
             {
@@ -791,7 +912,13 @@ namespace Sokoban
                 SetBoxes = numberSetBoxes(Map, PointsList);
                 updateInfo();
                 if (CheckEndRound(SetBoxes, PointsList))
+                {
+                    if (mapNumber == numberOfMap)
+                        endgame();
                     endRound();
+                }
+
+
             }
 
             if (e.KeyValue == 37) //lewo
@@ -801,7 +928,11 @@ namespace Sokoban
                 SetBoxes = numberSetBoxes(Map, PointsList);
                 updateInfo();
                 if (CheckEndRound(SetBoxes, PointsList))
+                {
+                    if (mapNumber == numberOfMap)
+                        endgame();
                     endRound();
+                }
             }
 
             if (e.KeyValue == 27) //escape
