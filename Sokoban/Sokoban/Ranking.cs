@@ -211,8 +211,6 @@ namespace Sokoban
 
         }
 
-
-
         private void mouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
