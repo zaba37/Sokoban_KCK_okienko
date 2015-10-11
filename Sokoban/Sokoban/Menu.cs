@@ -69,6 +69,7 @@ namespace Sokoban
                         ranking.Show(this);
                         this.Hide();
                         break;
+
                     case "ExitTag":
                         Application.Exit();
                         break;

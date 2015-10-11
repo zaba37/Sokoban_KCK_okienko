@@ -22,7 +22,7 @@ namespace Sokoban
             typewriter.SoundLocation = @"Music\mainMusic.wav";
             typewriter.PlayLooping();
 
-            Application.Run(new EndGame());
+            Application.Run(new Menu());
         }
     }
 }
