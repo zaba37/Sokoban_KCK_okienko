@@ -15,16 +15,16 @@ using System.Windows.Input;
 namespace Sokoban
 {
     public partial class Game : Form
-    {   
+    {
         SoundPlayer typewriter = SoundSingleton.getSoundPlayerInstance();
         Pause pauseWindow;
 
         private List<List<int>> readNumbers;
         List<List<MapObject>> Map;
-        
 
-        private int mapNumber = 1;
-        private int numberOfMap = 1;
+
+        private int mapNumber;
+        private int numberOfMap;
 
 
         private int totalPoints;
@@ -49,6 +49,11 @@ namespace Sokoban
         private System.Timers.Timer timer;
         private DateTime startTime;
         private String elapsedTime;
+        private TimeSpan elapsedTimeDateTime;
+
+        private PictureBox framePb;
+
+
         private DateTime pauseTime;
         private Label infoTimeLabel;
         private Point infoTimeLabelLocation;
@@ -73,7 +78,6 @@ namespace Sokoban
         private PictureBox[] startScreen;
         private CustomButton cbStart;
 
-        
 
         public Game()
         {
@@ -84,6 +88,8 @@ namespace Sokoban
             this.BackgroundImage = Image.FromFile(@"Map\Floor.png");
             this.DoubleBuffered = true;
 
+            mapNumber = 9;
+            numberOfMap = 9;  //ILOSC MAP
 
             PointsList = null;
             SetBoxes = 0;
@@ -116,8 +122,9 @@ namespace Sokoban
             startScreen[8] = new PictureBox();
             startScreen[8].Image = new Bitmap(@"Drawable\L9.png");
 
-            foreach(PictureBox start in startScreen){
-                start.Location = new Point(250,150);
+            foreach (PictureBox start in startScreen)
+            {
+                start.Location = new Point(250, 150);
                 start.Height = start.Image.Height;
                 start.Width = start.Image.Width;
                 start.BackColor = Color.Transparent;
@@ -125,15 +132,14 @@ namespace Sokoban
 
             cbStart = new CustomButton(@"Buttons\GameButtons\StartNormal.png", @"Buttons\GameButtons\StartPress.png", @"Buttons\GameButtons\StartFocus.png", 550, 380, "StartTag");
             cbStart.MouseClick += new MouseEventHandler(mouseClick);
-
-            initMap("sokoban_1.txt");
+            initMap("sokoban_" + mapNumber + ".txt");
         }
 
 
 
         private List<List<int>> readFile(string path)
         {
-            List<List<int>> intMap = null; 
+            List<List<int>> intMap = null;
 
             try
             {
@@ -152,67 +158,85 @@ namespace Sokoban
 
         private void initLabels()
         {
-            infoTimeLabelLocation = new Point(1200, 40);
+
+            framePb = new PictureBox();
+            framePb.Location = new Point(960, 0);
+            framePb.Image = new Bitmap(@"Map\frame.png");
+            framePb.Height = framePb.Image.Height;
+            framePb.Width = framePb.Image.Width;
+            framePb.BackColor = Color.Transparent;
+
+
+
+
+
+
+            infoTimeLabelLocation = new Point(1026, 70);
             infoTimeLabel = new Label();
-            infoTimeLabel.Width = 100;
-            infoTimeLabel.Height = 30;
-            infoTimeLabel.Font = new Font(Font.Name, 16);
+            // infoTimeLabel.Width = 80;
+            //infoTimeLabel.Height = 30;
+            infoTimeLabel.AutoSize = true;
+            infoTimeLabel.BackColor = Color.Red;
+            infoTimeLabel.Font = new Font(Font.Name, 13);
             infoTimeLabel.Location = infoTimeLabelLocation;
             infoTimeLabel.BackColor = System.Drawing.Color.Transparent;
-           // infoTimeLabel.Image = new Bitmap(@"Drawable\Wall_Gray.png");
+            // infoTimeLabel.Image = new Bitmap(@"Drawable\Wall_Gray.png");
             infoTimeLabel.Text = "Time: ";
             this.Controls.Add(infoTimeLabel);
 
-            TimeLabelLocation = new Point(1300, 40);
+            TimeLabelLocation = new Point(1086, 70);
             TimeLabel = new Label();
             TimeLabel.Width = 100;
             TimeLabel.Height = 30;
-            TimeLabel.Font = new Font(Font.Name, 16);
+            TimeLabel.Font = new Font(Font.Name, 13);
             TimeLabel.Location = TimeLabelLocation;
             TimeLabel.BackColor = System.Drawing.Color.Transparent;
             TimeLabel.Text = "00:00";
             this.Controls.Add(TimeLabel);
 
-            infoStepsLabelLocation = new Point(1200, 70);
+            infoStepsLabelLocation = new Point(1026, 100);
             infoStepsLabel = new Label();
-            infoStepsLabel.Width = 100;
-            infoStepsLabel.Height = 30;
-            infoStepsLabel.Font = new Font(Font.Name, 16);
+            // infoStepsLabel.Width = 175;
+            // infoStepsLabel.Height = 30;
+            infoStepsLabel.Font = new Font(Font.Name, 13);
             infoStepsLabel.Location = infoStepsLabelLocation;
             infoStepsLabel.BackColor = System.Drawing.Color.Transparent;
-            infoStepsLabel.Text = "steps: ";
+            infoStepsLabel.Text = "Number of steps: ";
+            infoStepsLabel.AutoSize = true;
             this.Controls.Add(infoStepsLabel);
 
-            StepsLabelLocation = new Point(1300, 70);
+            StepsLabelLocation = new Point(1181, 100);
             StepsLabel = new Label();
-            StepsLabel.Width = 100;
+            StepsLabel.Width = 60;
             StepsLabel.Height = 30;
-            StepsLabel.Font = new Font(Font.Name, 16);
+            StepsLabel.Font = new Font(Font.Name, 13);
             StepsLabel.Location = StepsLabelLocation;
             StepsLabel.BackColor = System.Drawing.Color.Transparent;
             StepsLabel.Text = "0";
             this.Controls.Add(StepsLabel);
 
 
-            infoBoxesLabelLocation = new Point(1200, 100);
+            infoBoxesLabelLocation = new Point(1026, 130);
             infoBoxesLabel = new Label();
-            infoBoxesLabel.Width = 100;
-            infoBoxesLabel.Height = 30;
-            infoBoxesLabel.Font = new Font(Font.Name, 16);
+            //infoBoxesLabel.Width = 175;
+            //   infoBoxesLabel.Height = 30;
+            infoBoxesLabel.Font = new Font(Font.Name, 13);
             infoBoxesLabel.Location = infoBoxesLabelLocation;
             infoBoxesLabel.BackColor = System.Drawing.Color.Transparent;
-            infoBoxesLabel.Text = "boxes: ";
+            infoBoxesLabel.Text = "Number of shifts boxes: ";
+            infoBoxesLabel.AutoSize = true;
             this.Controls.Add(infoBoxesLabel);
 
-            BoxesLabelLocation = new Point(1300, 100);
+            BoxesLabelLocation = new Point(1225, 130); //1136
             BoxesLabel = new Label();
-            BoxesLabel.Width = 100;
+            BoxesLabel.Width = 40;
             BoxesLabel.Height = 30;
-            BoxesLabel.Font = new Font(Font.Name, 16);
+            BoxesLabel.Font = new Font(Font.Name, 13);
             BoxesLabel.Location = BoxesLabelLocation;
             BoxesLabel.BackColor = System.Drawing.Color.Transparent;
             BoxesLabel.Text = "0";
             this.Controls.Add(BoxesLabel);
+            this.Controls.Add(framePb);
         }
 
 
@@ -242,7 +266,11 @@ namespace Sokoban
                         updateInfo();
                         typewriter.Play();
                         if (CheckEndRound(SetBoxes, PointsList))
+                        {
+                            if (mapNumber == numberOfMap)
+                                endgame();
                             endRound();
+                        }
                         break;
                     case "DownTag":
                         Map = refreshMap(Map, 0, 1, 0, 0);
@@ -250,7 +278,11 @@ namespace Sokoban
                         updateInfo();
                         typewriter.Play();
                         if (CheckEndRound(SetBoxes, PointsList))
+                        {
+                            if (mapNumber == numberOfMap)
+                                endgame();
                             endRound();
+                        }
                         break;
 
                     case "LeftTag":
@@ -259,7 +291,11 @@ namespace Sokoban
                         updateInfo();
                         typewriter.Play();
                         if (CheckEndRound(SetBoxes, PointsList))
+                        {
+                            if (mapNumber == numberOfMap)
+                                endgame();
                             endRound();
+                        }
                         break;
 
                     case "RightTag":
@@ -268,10 +304,14 @@ namespace Sokoban
                         updateInfo();
                         typewriter.Play();
                         if (CheckEndRound(SetBoxes, PointsList))
+                        {
+                            if (mapNumber == numberOfMap)
+                                endgame();
                             endRound();
+                        }
                         break;
 
-                    case "StartTag":              
+                    case "StartTag":
                         timer.AutoReset = true;
                         startTime = DateTime.Now;
                         timer.Start();
@@ -402,9 +442,18 @@ namespace Sokoban
 
         private void UpdateTime(ElapsedEventArgs e)
         {
-            elapsedTime = (DateTime.Now - startTime).ToString(@"mm\:ss");
-            // infoLabel.Text = elapsedTime;
-            TimeLabel.Text = elapsedTime;
+            try
+            {
+                elapsedTime = (DateTime.Now - startTime).ToString(@"mm\:ss");
+                elapsedTimeDateTime = (DateTime.Now - startTime);
+                // infoLabel.Text = elapsedTime;
+                if (TimeLabel != null && elapsedTime != null)
+                    TimeLabel.Text = elapsedTime;
+            }
+            catch
+            {
+
+            }
         }
 
 
@@ -777,10 +826,10 @@ namespace Sokoban
         {
             timer.Stop();
             mapNumber++;
-            
 
-            DateTime ElapsedTime = DateTime.Parse(elapsedTime);
-            int totalSeconds = (ElapsedTime.Hour * 360) + (ElapsedTime.Minute * 60) + ElapsedTime.Second;
+
+            //  DateTime ElapsedTime = DateTime.Parse(elapsedTime);
+            int totalSeconds = (elapsedTimeDateTime.Hours * 360) + (elapsedTimeDateTime.Minutes * 60) + elapsedTimeDateTime.Seconds;
             if (totalSeconds < 20)
                 totalPoints = totalPoints + 100;
             if (totalSeconds >= 20 && totalSeconds <= 40)
@@ -800,7 +849,7 @@ namespace Sokoban
 
         private void pressEsc()
         {
-            
+
             timer.Stop();
             pauseTime = DateTime.Now;
 
@@ -813,9 +862,9 @@ namespace Sokoban
                 pauseWindow = new Pause();
                 pauseWindow.Tag = Tag;
             }
-          
+
             this.Hide();
-            
+
             pauseWindow.ShowDialog();
 
             if (pauseWindow.flag == 1)
@@ -845,7 +894,8 @@ namespace Sokoban
                 this.Show();
             }
 
-            if(pauseWindow.flag == 3){
+            if (pauseWindow.flag == 3)
+            {
                 typewriter.Stop();
                 typewriter.SoundLocation = @"Music\mainMusic.wav";
                 typewriter.PlayLooping();
@@ -857,8 +907,9 @@ namespace Sokoban
         private void endgame()
         {
             timer.Stop();
-            DateTime ElapsedTime = DateTime.Parse(elapsedTime);
-            int totalSeconds = (ElapsedTime.Hour * 360) + (ElapsedTime.Minute * 60) + ElapsedTime.Second;
+            TimeSpan test = elapsedTimeDateTime;
+            // DateTime ElapsedTime = DateTime.Parse(elapsedTime);
+            int totalSeconds = (elapsedTimeDateTime.Hours * 360) + (elapsedTimeDateTime.Minutes * 60) + elapsedTimeDateTime.Seconds;
             if (totalSeconds < 20)
                 totalPoints = totalPoints + 100;
             if (totalSeconds >= 20 && totalSeconds <= 40)
@@ -870,7 +921,7 @@ namespace Sokoban
             totalPoints = totalPoints - (int)pointsForSteps;
             if (totalPoints < 0)
                 totalPoints = 0;
-            
+
             EndGame endGameWindow = new EndGame(totalPoints);
             endGameWindow.Show();
             this.Close();
@@ -937,8 +988,8 @@ namespace Sokoban
 
             if (e.KeyValue == 27) //escape
             {
-               pressEsc();
-              //  Environment.Exit(0);
+                pressEsc();
+                //  Environment.Exit(0);
             }
 
         }

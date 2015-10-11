@@ -18,9 +18,15 @@ namespace Sokoban
         private PictureBox logo;
         private Bitmap pngMSG;
         private PictureBox logoMSG;
+
         private TextBox nameTb;
         private int Points;
         Menu menuWindow;
+
+
+        private PictureBox logoEnterName;
+
+
         public EndGame(int points)
         {
             InitializeComponent();
@@ -46,30 +52,44 @@ namespace Sokoban
             logoMSG.Height = pngMSG.Height;
             logoMSG.Location = new Point(160, 300);
 
+            logoEnterName = new PictureBox();
+            logoEnterName.Image = new Bitmap(@"Drawable\logoEnterName.png");
+            logoEnterName.Width = logoEnterName.Image.Width;
+            logoEnterName.Height = logoEnterName.Image.Height;
+            logoEnterName.Location = new Point(350, 450);
+            logoEnterName.BackColor = Color.Transparent;
+
+
+
+
             this.BackgroundImage = new Bitmap(@"Drawable\Wall_Beige.png");
 
             cbExit = new CustomButton(@"Buttons\EndGameButtons\ExitNormal.png", @"Buttons\EndGameButtons\ExitPress.png", @"Buttons\EndGameButtons\ExitFocus.png", 1050, 650, "ExitTag");
             cbSave = new CustomButton(@"Buttons\EndGameButtons\SaveNormal.png", @"Buttons\EndGameButtons\SavePress.png", @"Buttons\EndGameButtons\SaveFocus.png", 20, 650, "SaveTag");
 
+
             nameTb = new TextBox();
-            nameTb.Location = new Point(150, 300);
-            nameTb.Width = 400;
-            nameTb.Height = 220;
-            nameTb.BackColor = Color.Red;
+            nameTb.Location = new Point(700, 455);
+            nameTb.Width = 260;
+            nameTb.Height = 100;
+            nameTb.Font = new Font(Font.Name, 23);
+            nameTb.BackColor = Color.Bisque;
+            nameTb.MaxLength = 10;
 
             this.Controls.Add(nameTb);
             this.Controls.Add(logoMSG);
             this.Controls.Add(logo);
             this.Controls.Add(cbExit);
             this.Controls.Add(cbSave);
-            
+            this.Controls.Add(logoEnterName);
+
             cbSave.MouseClick += new MouseEventHandler(mouseClick);
             cbExit.MouseClick += new MouseEventHandler(mouseClick);
         }
 
 
-        
-          
+
+
 
         private void mouseClick(object sender, MouseEventArgs e)
         {
@@ -78,16 +98,18 @@ namespace Sokoban
                 switch (((CustomButton)sender).Tag.ToString())
                 {
                     case "SaveTag":
-                        saveRanking(nameTb.Text, Points);                       
-                        var menu2 = (Menu)Tag;
-                        menu2.Show();
-                        this.Close();
+                        saveRanking(nameTb.Text, Points);
+                        // var menu2 = (Menu)Tag;
+                        // menu2.Show();
+                        // this.Close();
+                        Environment.Exit(0);
                         break;
                     case "ExitTag":
-                        this.Close();
-                        var menu = (Menu)Tag;
-                        menu.Show();
-                        break;                  
+                        //this.Close();
+                        //var menu = (Menu)Tag;
+                        //menu.Show();
+                        Environment.Exit(0);
+                        break;
                 }
             }
         }
@@ -115,7 +137,10 @@ namespace Sokoban
             file.Close();
 
 
+
+            this.Controls.Add(logoEnterName);
+
         }
-    
+
     }
 }

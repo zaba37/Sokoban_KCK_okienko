@@ -135,7 +135,7 @@ namespace Sokoban
 
             this.Controls.Add(RankingNameLabel);
 
-            RankingScoreLabelLocation = new Point(675, 380);
+            RankingScoreLabelLocation = new Point(671, 350);
 
             RankingScoreLabel = new Label();
             RankingScoreLabel.Width = 160;
@@ -145,16 +145,32 @@ namespace Sokoban
             RankingScoreLabel.Location = RankingScoreLabelLocation;
             RankingScoreLabel.BackColor = System.Drawing.Color.Transparent;
             RankingScoreLabel.Text = "";
+
             for (int i = from; i < to; i++)
             {
                 RankingScoreLabel.Text += RankingItemList[i].score + "\n";
 
             }
-            this.Controls.Remove(RankingScoreLabel);
+
             this.Controls.Add(RankingScoreLabel);
-            
+        }
 
+        public void scrollRanking(int from, int to)
+        {
+            RankingScoreLabel.Text = null;
+            RankingNameLabel.Text = null;
 
+            for (int i = from; i < to; i++)
+            {
+                RankingScoreLabel.Text += RankingItemList[i].score + "\n";
+
+            }
+
+            for (int i = from; i < to; i++)
+            {
+                RankingNameLabel.Text += RankingItemList[i].name + "\n";
+
+            }
         }
 
         public Ranking()
@@ -186,8 +202,6 @@ namespace Sokoban
             cbArrowDown = new CustomButton(@"Buttons\RankingButtons\DownNormal.png", @"Buttons\RankingButtons\DownPress.png", @"Buttons\RankingButtons\DownFocus.png", 920, 680, "ArrowDownTag");
             this.BackgroundImage = new Bitmap(@"Drawable\Wall_Beige.png");
 
-            
-            
             this.Controls.Add(cbBack);
 
             this.Controls.Add(cbArrowUp);
@@ -215,8 +229,6 @@ namespace Sokoban
 
         }
 
-
-
         private void mouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -228,15 +240,16 @@ namespace Sokoban
                         {
                             from--;
                             to--;
-                            printRanking(from, to);
+                            scrollRanking(from, to);
                         }
                         break;
                     case "ArrowDownTag":
+                        RankingScoreLabel.Text = " ";
                         if (to < RankingItemList.Count())
                         {
                             from++;
                             to++;
-                            printRanking(from, to);
+                            scrollRanking(from, to);
                         }
                         break;
                     case "BackTag":
